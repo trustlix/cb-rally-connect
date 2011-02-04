@@ -6,6 +6,18 @@ gem 'rails', '3.0.3'
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 gem 'sqlite3-ruby', :require => 'sqlite3'
+gem 'rally_rest_api', '1.0.3'
+
+group :development do
+  gem 'rspec-rails'
+  gem 'annotate-models'
+end
+
+group :test do
+  gem 'rspec'
+  gem 'webrat'
+  gem 'annotate-models'
+end
 
 # Use unicorn as the web server
 # gem 'unicorn'
