@@ -8,11 +8,11 @@ gem 'rails', '3.0.3'
 gem 'sqlite3-ruby', :require => 'sqlite3'
 gem 'rally_rest_api', '1.0.3'
 gem 'json'
-gem 'ruby-debug'
 
 group :development do
   gem 'rspec-rails'
   gem 'annotate-models'
+  gem 'ruby-debug'
 end
 
 group :test do
