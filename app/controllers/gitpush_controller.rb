@@ -4,7 +4,8 @@ require 'json/add/rails'
 class GitpushController < ApplicationController
 
   def updaterally
-    puts "Post content:" + JSON.parse(params["payload"]).to_s
+    puts "Post content:\n"
+    p JSON.parse(params["payload"])
 
     render :nothing => true, :status => 200
   end
