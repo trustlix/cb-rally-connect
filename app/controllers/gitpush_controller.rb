@@ -1,5 +1,5 @@
 require 'json/add/rails'
-require 'ruby-debug'
+#require 'ruby-debug'
 
 class GitpushController < ApplicationController
 
