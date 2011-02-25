@@ -58,7 +58,7 @@ class GitpushController < ApplicationController
       commit_author = "#{commit["author"]["name"]} <#{commit["author"]["email"]}>"
       msg = "<br />---<br />#{commit_author}<br />"
       msg << "On: #{commit["timestamp"]}<br />"
-      msg << "URL: #{commit["url"]}<br />"
+      msg << "URL: <a target=\"_blank\" href=\"#{commit["url"]}\">#{commit["id"]}</a><br />"
       msg << "Msg: #{commit["message"]}<br />---<br />"
 
       p msg
