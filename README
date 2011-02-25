@@ -1,1 +1,57 @@
 == cb-rally-connect
+
+Simple solution to update RallyDev objects (mainly user stories and defects)
+based on commit messages from CodebaseHQ Git/Mercurial repos.
+
+CodebaseHQ doesn't permit to configure post-receive hooks, but they have a neat
+notification system, which supports sending JSON documents via HTTP POST to some 
+specific URL (supports basic authn).
+
+cb-rally-connect is a basic rails app that parses the given JSON and updates
+rally objects via rally_rest_api. Steps to use cb-rally-connect:
+
+1. Deploy cb-rally-connect to some app server. (I use my dreamhost account or
+heroku)
+
+2. Configure all required notifications in CodebaseHQ. Set the URL according to
+where you deployed your app. Use your Rally user and password to authenticate to
+cb-rally-connect
+
+(http://docs.atechmedia.com/codebase/user-manual/advanced/notification-centre)
+
+3. Include the tokens in your commit messages according to the guidelines below.
+Have fun :-)
+
+
+Stories:
+--------
+
+[USXXX]
+Adds a note to USXXX referencing the commit.
+
+[USXXX: completed]
+Adds a note to USXXX referencing the commit, marks all tasks as completed and
+then marks USXXX as completed
+
+Example:
+
+$git commit -m "[USYYY: completed][US10] Your message here"
+
+
+Defects:
+--------
+
+[DEXXX]
+Adds a note to DEXXX referencing the commit
+
+[DEXXX: fixed]
+Adds a note to DEXXX referencing the commit, marks all tasks as completed and
+then marks DEXXX as fixed
+
+Known issues
+------------
+
+- We only support updating stories and defects, inside the user's default
+  workspace. (I didn't need those features, that's why I didn't care developing
+  them... feel free to send me patches, though)
+
