@@ -46,20 +46,12 @@ class GitpushController < ApplicationController
       p rally_defects
       p rally_stories
     
-      #rally_defects.each do |id, action|
-      #  puts "ID: #{id} - Action: #{action}"
-      #end
-      #rally_stories.each do |id, action|
-      #  puts "ID: #{id} - Action: #{action}"
-      #end
-      
-      ##
-      # create string with message to include in rally objects
-      commit_author = "#{commit["author"]["name"]} <#{commit["author"]["email"]}>"
-      msg = "<br />---<br />#{commit_author}<br />"
-      msg << "On: #{commit["timestamp"]}<br />"
-      msg << "URL: <a target=\"_blank\" href=\"#{commit["url"]}\">#{commit["id"]}</a><br />"
-      msg << "Msg: #{commit["message"]}<br />---<br />"
+      commit_author = "<a href='mailto:#{commit["author"]["email"]}\
+?subject=#{commit["message"]}'> #{commit["author"]["name"]} \
+&lt;#{commit["author"]["email"]}&gt;</a>"
+      msg = "<strong>#{commit["message"]}</strong> <a href='#{commit["url"]}' \
+target='_blank'>(#{commit["id"]})</a> <br /><em>by #{commit_author} on \
+#{commit["timestamp"]}</em><br /><br />"
 
       p msg
 
@@ -123,7 +115,7 @@ class GitpushController < ApplicationController
       ##
       # Prepare message to include as note
       note = defect.notes || ""
-      note << msg
+      msg << note
 
       # Update rally obj according to given action
       action = rally_defects[defect.formatted_i_d]
@@ -144,7 +136,7 @@ class GitpushController < ApplicationController
           close_tasks(defect.tasks)
         end
 
-        defect.update(:notes => note,
+        defect.update(:notes => msg,
           :schedule_state => @@VALID_DEFECT_ACTIONS[action][:schedule_state],
           :state => @@VALID_DEFECT_ACTIONS[action][:state])
       rescue
@@ -176,7 +168,7 @@ class GitpushController < ApplicationController
       ##
       # Prepare message to include as note
       note = story.notes || ""
-      note << msg
+      msg << note
 
       # Update rally obj according to given action
       action = rally_stories[story.formatted_i_d]
@@ -197,7 +189,7 @@ class GitpushController < ApplicationController
           close_tasks(story.tasks)
         end
                      
-        story.update(:notes => note, 
+        story.update(:notes => msg, 
                      :schedule_state => @@VALID_STORY_ACTIONS[action][:schedule_state])
       rescue
         puts "Error updating story: #{story.name} -> #{$!}"
