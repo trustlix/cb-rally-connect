@@ -21,11 +21,11 @@ class GitpushController < ApplicationController
   }
   @@VALID_STORY_ACTIONS = {
     :none => {
-      :state => "In-Progress",
+      :schedule_state => "In-Progress",
       :close_tasks => false
     },
     :completed => {
-      :state => "Completed",
+      :schedule_state => "Completed",
       :close_tasks => true
     }
   }
@@ -196,9 +196,9 @@ class GitpushController < ApplicationController
         if @@VALID_STORY_ACTIONS[action][:close_tasks]
           close_tasks(story.tasks)
         end
-
+                     
         story.update(:notes => note, 
-                     :state => @@VALID_STORY_ACTIONS[action][:state])
+                     :schedule_state => @@VALID_STORY_ACTIONS[action][:schedule_state])
       rescue
         puts "Error updating story: #{story.name} -> #{$!}"
       end
