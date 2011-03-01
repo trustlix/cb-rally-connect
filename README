@@ -29,7 +29,7 @@ Stories:
 [USXXX]
 Adds a note to USXXX referencing the commit.
 
-[USXXX: completed]
+[completed:USXXX]
 Adds a note to USXXX referencing the commit, marks all tasks as completed and
 then marks USXXX as completed
 
@@ -44,7 +44,7 @@ Defects:
 [DEXXX]
 Adds a note to DEXXX referencing the commit
 
-[DEXXX: fixed]
+[fixed:DEXXX]
 Adds a note to DEXXX referencing the commit, marks all tasks as completed and
 then marks DEXXX as fixed
 
