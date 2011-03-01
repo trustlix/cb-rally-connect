@@ -65,7 +65,7 @@ target='_blank'>(#{commit["id"]})</a> <br /><em>by #{commit_author} on \
 
 
   # Parse a commit message containing tokens in the formats:
-  # [US: XXX], [USXXX], [DEXXX] and [DE]
+  # [Action:USXXX], [USXXX], [Action:DEXXX] and [DEXXX]
   # XXX will be the number of Story or Deffect.
   def parse_commit_msg(msg = "")
     
@@ -77,12 +77,12 @@ target='_blank'>(#{commit["id"]})</a> <br /><em>by #{commit_author} on \
     # TODO: there must be a better way to do this, instead of using a loop...
     # its just that I'm not a regex master! :-/
     # puts "Parsing commits:\n"
-    while results = /(\[(US|DE)\d+(:\s\w+)?\])/.match(msg)
+    while results = /\[(\w+:)?(US|DE)\d+\]/.match(msg)
       # split by obj type. Pattern is [{"Id"=>"Action"},...]
-      if /(DE\d+)(:\s*)?(\w+)?/ =~ results.to_s
-        rally_defects[$1] = $3 || ""
-      elsif /(US\d+)(:\s*)?(\w+)?/ =~ results.to_s
-        rally_stories[$1] = $3 || ""
+      if /(\w+)?:?(DE\d+)/ =~ results.to_s
+        rally_defects[$2] = $1 || ""
+      elsif /(\w+)?:?(US\d+)/ =~ results.to_s
+        rally_stories[$2] = $1 || ""
       end
       
       # skip to next part of commit msg
