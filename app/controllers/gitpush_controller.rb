@@ -220,7 +220,13 @@ private
     authenticate_or_request_with_http_basic do |id ,pass|
       # Forward authn to Rally. Use given credentials.
       begin
-        @rally_connector = RallyRestAPI.new(:username => id, :password => pass)
+        custom_headers = CustomHttpHeader.new
+        custom_headers.name = "CodebaseHQ to Rally Connector"
+        custom_headers.version = "Alpha"
+        custom_headers.vendor = "Abril Group"
+
+        @rally_connector = RallyRestAPI.new(:username => id, :password => pass, 
+                                           :http_headers => custom_headers)
       rescue
         render :nothing => true, :status => 401
       end
