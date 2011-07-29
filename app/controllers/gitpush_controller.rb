@@ -1,5 +1,6 @@
 require 'json/add/rails'
 require 'rally_rest_api'
+require 'ruby-debug'
 
 class GitpushController < ApplicationController
   # require authentication
@@ -9,6 +10,11 @@ class GitpushController < ApplicationController
   # according to the mapping below:
   @@VALID_DEFECT_ACTIONS = {
     :none => {
+      :schedule_state => nil,
+      :state => nil,
+      :close_tasks => false
+    },
+    :working => {
       :schedule_state => "In-Progress",
       :state => "Open",
       :close_tasks => false
@@ -21,6 +27,10 @@ class GitpushController < ApplicationController
   }
   @@VALID_STORY_ACTIONS = {
     :none => {
+      :schedule_state => nil,
+      :close_tasks => false
+    },
+    :working => {
       :schedule_state => "In-Progress",
       :close_tasks => false
     },
@@ -110,7 +120,7 @@ target='_blank'>(#{commit["id"]})</a> <br /><em>by #{commit_author} on \
     }
 
     # OK, now we have all the defects from rally, lets update them according
-    # to the actions we have configured
+    # to the actions we have configured.
     query_results.each do |defect|
       ##
       # Prepare message to include as note
@@ -119,13 +129,14 @@ target='_blank'>(#{commit["id"]})</a> <br /><em>by #{commit_author} on \
 
       # Update rally obj according to given action
       action = rally_defects[defect.formatted_i_d]
-      if action == "" || action == nil
+      if defect.state.downcase == "closed"
         action = :none
+      elsif action == nil or action == ""
+        action = :working
       else
         action = action.downcase.to_sym
         if not @@VALID_DEFECT_ACTIONS.has_key?(action)
-          puts "Invalid action: #{action}"
-          action = :none
+          action = :working
         end
       end
 
@@ -136,9 +147,20 @@ target='_blank'>(#{commit["id"]})</a> <br /><em>by #{commit_author} on \
           close_tasks(defect.tasks)
         end
 
-        defect.update(:notes => msg,
-          :schedule_state => @@VALID_DEFECT_ACTIONS[action][:schedule_state],
-          :state => @@VALID_DEFECT_ACTIONS[action][:state])
+        if @@VALID_DEFECT_ACTIONS[action][:schedule_state] &&
+          @@VALID_DEFECT_ACTIONS[action][:state]
+          defect.update(:notes => msg,
+            :schedule_state => @@VALID_DEFECT_ACTIONS[action][:schedule_state],
+            :state => @@VALID_DEFECT_ACTIONS[action][:state])
+        elsif @@VALID_DEFECT_ACTIONS[action][:schedule_state]
+          defect.update(:notes => msg,
+            :schedule_state => @@VALID_DEFECT_ACTIONS[action][:schedule_state])
+        elsif @@VALID_DEFECT_ACTIONS[action][:state]
+          defect.update(:notes => msg, 
+            :state => @@VALID_DEFECT_ACTIONS[action][:state])
+        else
+          defect.update(:notes => msg) 
+        end
       rescue
         puts "Error updating defect: #{defect.name} -> #{$!}"
       end
@@ -172,13 +194,16 @@ target='_blank'>(#{commit["id"]})</a> <br /><em>by #{commit_author} on \
 
       # Update rally obj according to given action
       action = rally_stories[story.formatted_i_d]
-      if action == "" || action == nil
+      if story.schedule_state.downcase == "accepted" or
+        story.schedule_state.downcase == "completed"
         action = :none
+      elsif action == "" || action == nil
+        action = :working
       else
         action = action.downcase.to_sym
         if not @@VALID_STORY_ACTIONS.has_key?(action)
           puts "Invalid action: #{action}"
-          action = :none
+          action = :working
         end
       end
 
@@ -189,8 +214,12 @@ target='_blank'>(#{commit["id"]})</a> <br /><em>by #{commit_author} on \
           close_tasks(story.tasks)
         end
                      
-        story.update(:notes => msg, 
-                     :schedule_state => @@VALID_STORY_ACTIONS[action][:schedule_state])
+        if @@VALID_STORY_ACTIONS[action][:schedule_state]
+          story.update(:notes => msg, 
+            :schedule_state => @@VALID_STORY_ACTIONS[action][:schedule_state])
+        else
+          story.update(:notes => msg)
+        end
       rescue
         puts "Error updating story: #{story.name} -> #{$!}"
       end
