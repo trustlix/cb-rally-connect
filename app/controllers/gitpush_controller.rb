@@ -1,6 +1,6 @@
 require 'json/add/rails'
 require 'rally_rest_api'
-require 'ruby-debug'
+#require 'ruby-debug'
 
 class GitpushController < ApplicationController
   # require authentication
