@@ -64,6 +64,10 @@ class CodebaseCommit
 
     modified_files = {}
     VALID_CHANGES.each do |a|
+      
+      # remember: not all commits have changed files...
+      next unless  @raw_commit.key?(a)
+
       modified_files[a] = []
       @raw_commit[a].each do |file|
         modified_files[a].push({:path => file, 

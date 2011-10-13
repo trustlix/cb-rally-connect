@@ -29,11 +29,14 @@ class RallyUpdater
     ##
     # handle stories and defects found on each commit's msg
     cb_push.commits.each do |c|
+      Rails.logger.info("Handling commit: #{c.id}")
 
       ##
       # no tokens to handle, jump to next commit
-      next if c.rally_artifact_tokens['US'].nil? and \
-        c.rally_artifact_tokens['DE'].nil?
+      if c.rally_artifact_tokens['US'].nil? and c.rally_artifact_tokens['DE'].nil?
+        Rails.logger.info("No tokens found in commit's message")
+        next
+      end
 
       ##
       # find rally artifacts
@@ -154,9 +157,9 @@ class RallyUpdater
   #
   #
   def create_rally_changes(commit, changeset)
-    Rails.logger.info("Creating changes")
-    
     return [] if commit == nil || changeset == nil
+    
+    Rails.logger.info("Creating changes")
 
     changes = []
     commit.files_changed.each { |action, files|

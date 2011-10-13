@@ -13,6 +13,7 @@ class GitpushController < ApplicationController
   end
 
   def updaterally
+    Rails.logger.info(params)
     cbjson = JSON.parse(params["payload"])
     cbpush = CodebasePush.new(cbjson)
     rupdater = RallyUpdater.new(:rally_connector => RALLY_CONNECTOR)
