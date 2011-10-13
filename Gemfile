@@ -6,7 +6,7 @@ gem 'rails', '3.0.3'
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 gem 'sqlite3-ruby', :require => 'sqlite3'
-gem 'rally_rest_api', '1.0.3'
+gem 'rally_rest_api'#, '1.0.3'
 gem 'json'
 
 group :development do

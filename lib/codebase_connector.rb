@@ -1,21 +1,22 @@
 require 'json'
-require 'ruby-debug'
 
 class CodebasePush
 
-  attr_reader :commits, :repository
+  attr_reader :commits, :repository, :repository_url
 
   def initialize(codebase_push_json = nil)
     @codebase_json = codebase_push_json
     @commits = parse_commits
 
-    if @codebase_json.key?("repository") and 
-      @codebase_json["repository"].key?("name")
-      @repository = @codebase_json["repository"]["name"]
-    else
-      @repository = nil
+    @repository = @repository_url = nil
+    if @codebase_json.key?("repository") 
+      if @codebase_json["repository"].key?("name")
+        @repository = @codebase_json["repository"]["name"]
+      end
+      if @codebase_json["repository"].key?("url")
+        @repository_url = @codebase_json["repository"]["url"]
+      end
     end
-
   end
 
   private
@@ -93,8 +94,9 @@ class CodebaseCommit
       next unless (token[1] and token[2]) # required data
 
       # initialize array for every new artifact type, then populate it
-      tokens[token[1]] = [] unless tokens.key?(token[1])
-      tokens[token[1]].push({:id => token[1]+token[2], :state => token[0]})
+      tokens[token[1]] = {} unless tokens.key?(token[1])
+      tokens[token[1]][token[1]+token[2]] = 
+        token[0].nil? ? nil : token[0].chomp(':')
     end
 
     return tokens

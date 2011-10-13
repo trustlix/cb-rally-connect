@@ -3,6 +3,8 @@ Cbhq::Application.routes.draw do
   # first created -> highest priority.
 
   match 'updaterally' => 'gitpush#updaterally', :via => 'post'
+  # match 'test' => 'gitpush#test', :via => 'get'
+  match 'test' => 'gitpush#test', :via => 'post'
 
   # Sample of regular route:
   #   match 'products/:id' => 'catalog#view'
