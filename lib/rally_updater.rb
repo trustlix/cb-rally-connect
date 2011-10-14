@@ -77,7 +77,7 @@ class RallyUpdater
         stories.each { |s|
           Rails.logger.info("Updating #{s.formatted_i_d}")
           update_rally_story(c, s, cs)
-          create_discussion_msg(s, c, rally_user)
+          create_discussion_msg(s, c)
         }
       else
         Rails.logger.info("Stories not found in Rally")
@@ -87,7 +87,7 @@ class RallyUpdater
         defects.each { |d|
           Rails.logger.info("Updating #{d.formatted_i_d}")
           update_rally_defec(c, d, cs, rally_user)
-          create_discussion_msg(d, c, rally_user)
+          create_discussion_msg(d, c)
         }
       else
         Rails.logger.info("Defects not found in Rally")
@@ -201,19 +201,18 @@ class RallyUpdater
   ##
   #
   #
-  def create_discussion_msg(artifact = nil, commit = nil, user = nil)
+  def create_discussion_msg(artifact = nil, commit = nil)
     return nil unless (artifact and commit)
-    
-    # defaults to connection's user when commit's author not found in Rally
-    user = @rally_connector.get_conn_user if user.nil?
 
     msg = commit.msg.slice(0,32767)
+    if not commit.author.nil?
+      msg = "Commit made by <b>#{commit.author["email"]}</b> [#{commit.id}][#{commit.timestamp}]<br/>#{msg}"
+    end
 
     conversation_post = @rally_connector.create_rally_obj(:conversation_post, {
       :workspace => @rally_connector.workspace.ref,
       :artifact => artifact.ref,
-      :user => user.ref,
-      :text => "<b>Commit</b><br/>" + msg
+      :text => msg
     })
 
     return conversation_post
