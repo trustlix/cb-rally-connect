@@ -1,4 +1,4 @@
-== cb-rally-connect
+= cb-rally-connect =
 
 Simple solution to update RallyDev objects (mainly user stories and defects)
 based on commit messages from CodebaseHQ Git/Mercurial repos.
@@ -13,8 +13,8 @@ rally objects via rally_rest_api. Steps to use cb-rally-connect:
 1. Deploy cb-rally-connect to some app server. (I use my dreamhost account or
 heroku)
 
-2. Make sure you configure the environment variables RALLY_PASSWORD and
-RALLY_USERNAME, or configure the config/config.yml file.
+2. Make sure you edit and change the settings at config/config.yml. You can
+also set the username and password via env vars RALLY_PASSWORD and RALLY_USERNAME
 
 3. Configure all required notifications in CodebaseHQ. Set the URL according to
 where you deployed your app.
@@ -23,8 +23,7 @@ where you deployed your app.
 Have fun :-)
 
 
-Stories:
---------
+== Stories: ==
 
 [USXXX]
 Adds a conversation post containing the commit's message. Also creates a
@@ -39,12 +38,13 @@ Example:
 $git commit -m "[Completed:USYYY][US10] Your message here"
 
 
-Defects:
---------
+
+== Defects: ==
 
 [DEXXX]
 Adds a conversation post containing the commit's message. Also creates a
-changeset (with all changed files). Link everything to the given Defect
+changeset (with all changed files). Link everything to the given Defect. Set
+Defect's owner to commit's author whenever he also exists in Rally.
 
 [Fixed:DEXXX]
 Same as above, but also changes the state of DEXXX to the one given
@@ -53,7 +53,4 @@ before the colon. All available defect states are supported.
 Known issues
 ------------
 
-- We only support updating stories and defects, inside the user's default
-  workspace. (I didn't need those features, that's why I didn't care developing
-  them... feel free to send me patches, though)
-
+- We only support updating stories and defects inside the configured workspace.
