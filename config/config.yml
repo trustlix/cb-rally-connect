@@ -2,7 +2,7 @@ development: &development
   # rally credentials
   rally_username: 
   rally_password: 
-  rally_workspace: Plataforma Alexandria
+  rally_workspace: 
   rally_api_version: 1.24
   # custom http headers - REST API
   custom_headers:
