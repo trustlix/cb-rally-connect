@@ -6,10 +6,10 @@ class RallyUpdater
     :update_owner
 
   def initialize(options)
-    @rally_connector = options[:rally_connector] || nil
-    @update_schedule_state = options[:update_schedule_state] || true
-    @update_states = options[:update_states] || true
-    @update_owner = options[:update_owner] || true
+    @rally_connector = options[:rally_connector]
+    @update_schedule_state = options[:update_schedule_state].nil? ? true : options[:update_schedule_state]
+    @update_states = options[:update_states].nil? ? true : options[:update_states]
+    @update_owner = options[:update_owner].nil? ? true : options[:update_owner]
   end
 
   def update_rally_artifacts(cb_push = nil)
@@ -123,7 +123,9 @@ class RallyUpdater
     options = {}
     options[:changeset] = changeset unless changeset.nil?
     options[:state] = state unless state.nil?
-    options[:owner] = user.ref unless user.nil?
+    if @update_owner
+      options[:owner] = user.ref unless user.nil?
+    end
     
     Rails.logger.info("Updating defect: #{defect.formatted_i_d}, options: #{options}")
 
